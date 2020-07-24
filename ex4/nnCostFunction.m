@@ -48,9 +48,12 @@ a2 = [ones(m,1) a2'];
 z3 = Theta2*a2';
 a3 = sigmoid(z3);
 
-y_new = eye(num_labels)(y,:);
+y_new = zeros(num_labels, m);
+for i = 1:m
+	y_new(y(i),i) = 1;
+end;
 
-J = (1/m)*sum(sum((-y_new').*log(a3) - (1-y_new').*log(1-a3)));
+J = (1/m)*sum(sum((-y_new).*log(a3) - (1-y_new).*log(1-a3)));
 
 Reg = lambda  * (sum( sum ( (Theta1(:,2:size(Theta1,2))).^ 2 )) + sum( sum ( Theta2(:,2:size(Theta2,2)).^ 2 ))) / (2*m);
 
@@ -71,6 +74,29 @@ J = J + Reg;
 %               first time.
 %
 
+for i = 1:m
+	% performing feed-forward
+	a1 = [1 X(i, :)];
+	z2 = Theta1*a1';
+	a2 = sigmoid(z2);
+	a2 = [1 a2'];
+	z3 = Theta2*a2';
+	a3 = sigmoid(z3);
+
+	%finding the individual delta terms
+	d3 = a3-y_new(:,i);
+	z2 = [1; z2];
+	d2 = (Theta2'*d3).*sigmoidGradient(z2);
+	d2 = d2(2:end);
+	% updating the grads
+	Theta2_grad = Theta2_grad + d3*a2;
+	Theta1_grad = Theta1_grad + d2*a1;
+
+end;
+
+
+Theta2_grad = (1/m) * Theta2_grad;
+Theta1_grad = (1/m) * Theta1_grad;
 
 % Part 3: Implement regularization with the cost function and gradients.
 %
@@ -79,6 +105,10 @@ J = J + Reg;
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + ((lambda/m)*Theta1(:, 2:end));
+
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + ((lambda/m)*Theta2(:, 2:end));
 
 % -------------------------------------------------------------
 
