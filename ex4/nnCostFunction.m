@@ -48,12 +48,9 @@ a2 = [ones(m,1) a2'];
 z3 = Theta2*a2';
 a3 = sigmoid(z3);
 
-y_new = zeros(num_labels, m);
-for i=1:m,
-  y_new(y(i),i)=1;
-end
+y_new = eye(num_labels)(y,:);
 
-J = (1/m)*sum(sum((-y_new).*log(a3) - (1-y_new).*log(1-a3)));
+J = (1/m)*sum(sum((-y_new').*log(a3) - (1-y_new').*log(1-a3)));
 
 Reg = lambda  * (sum( sum ( (Theta1(:,2:size(Theta1,2))).^ 2 )) + sum( sum ( Theta2(:,2:size(Theta2,2)).^ 2 ))) / (2*m);
 
