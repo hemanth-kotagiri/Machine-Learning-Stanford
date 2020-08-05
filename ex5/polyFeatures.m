@@ -15,7 +15,13 @@ X_poly = zeros(numel(X), p);
 %
 % 
 
-
+for i = 1: size(X,1)
+  curr = zeros(p,1);
+  for j = 1:p
+    curr(j) = X(i).^j;
+  endfor
+  X_poly(i, :) = curr;
+endfor
 
 
 

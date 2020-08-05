@@ -30,6 +30,21 @@ error_val   = zeros(m, 1);
 %
 % Note: You should evaluate the training error on the first i training
 %       examples (i.e., X(1:i, :) and y(1:i)).
+X_train = X(1:i, :);
+y_train = y(1:i, :);
+
+for i = 1:m
+  X_train = X(1:i, :);
+  y_train = y(1:i, :);
+  theta = trainLinearReg(X_train, y_train, lambda);
+  error_train(i) = linearRegCostFunction(X_train, y_train, theta, 0); 
+  error_val(i) = linearRegCostFunction(Xval, yval, theta, 0);
+  
+endfor
+
+
+
+
 %
 %       For the cross-validation error, you should instead evaluate on
 %       the _entire_ cross validation set (Xval and yval).
